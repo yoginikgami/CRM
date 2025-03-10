@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-custom:hover {
+            background-color: #218838;
+        }
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3 class="text-center mb-4">Meeting Management</h3>
+    
+    <form>
+        <!-- Contact Details -->
+        <div class="mb-3">
+            <label class="form-label">Contact Person</label>
+            <input type="text" class="form-control" placeholder="Enter Name">
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Mobile 1</label>
+                <input type="text" class="form-control" placeholder="Enter Mobile">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Mobile 2</label>
+                <input type="text" class="form-control" placeholder="Enter Mobile">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Company Name</label>
+            <input type="text" class="form-control" placeholder="Enter Company Name">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" rows="2" placeholder="Enter Address"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" placeholder="Enter City">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">State</label>
+                <input type="text" class="form-control" placeholder="Enter State">
+            </div>
+        </div>
+
+        <!-- Meeting Details -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Meeting Date</label>
+                <input type="date" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Meeting Time</label>
+                <input type="time" class="form-control">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Remarks</label>
+            <textarea class="form-control" rows="2" placeholder="Enter Remarks"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Place of Meeting</label>
+            <input type="text" class="form-control" placeholder="Enter Meeting Location">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Minutes of Meeting (MOM)</label>
+            <textarea class="form-control" rows="3" placeholder="Enter MOM"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select class="form-control">
+                <option value="">Select Status</option>
+                <option>Pending</option>
+                <option>Completed</option>
+                <option>Cancelled</option>
+            </select>
+        </div>
+
+        <!-- Assigned Managers -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Assistant Manager</label>
+                <input type="text" class="form-control" placeholder="Enter Name">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Assistant Manager Email</label>
+                <input type="email" class="form-control" placeholder="Enter Email">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Meeting Organizer</label>
+                <input type="text" class="form-control" placeholder="Enter Name">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Meeting Organizer Email</label>
+                <input type="email" class="form-control" placeholder="Enter Email">
+            </div>
+        </div>
+
+        <!-- Created By -->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Created By</label>
+                <input type="text" class="form-control" placeholder="Admin" disabled>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Created At</label>
+                <input type="date" class="form-control" disabled>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-custom">Save Meeting</button>
+            <button type="reset" class="btn btn-cancel">Cancel</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
