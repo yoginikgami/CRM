@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Client Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="client-details-container">
+        <h2>Client Details</h2>
+        <div id="clientInfo">
+            <p><strong>Name:</strong> <span id="clientName"></span></p>
+            <p><strong>Email:</strong> <span id="clientEmail"></span></p>
+            <p><strong>Phone:</strong> <span id="clientPhone"></span></p>
+            <p><strong>Company:</strong> <span id="clientCompany"></span></p>
+            <button id="editClientBtn">Edit</button>
+            <button id="deleteClientBtn">Delete</button>
+        </div>
+    </div>
+
+    <!-- Edit Client Modal -->
+    <div id="editClientModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Client</h3>
+            <input type="text" id="editClientName" required>
+            <input type="email" id="editClientEmail" required>
+            <input type="text" id="editClientPhone" required>
+            <input type="text" id="editClientCompany" required>
+            <button id="saveClientChanges">Save</button>
+            <button onclick="closeEditModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let clientId = new URLSearchParams(window.location.search).get("id");
+
+            function loadClientDetails() {
+                $.ajax({
+                    url: "fetch_client_details.php",
+                    type: "GET",
+                    data: { id: clientId },
+                    success: function(data) {
+                        let client = JSON.parse(data);
+                        $("#clientName").text(client.name);
+                        $("#clientEmail").text(client.email);
+                        $("#clientPhone").text(client.phone);
+                        $("#clientCompany").text(client.company);
+                    }
+                });
+            }
+
+            $("#editClientBtn").click(function() {
+                $("#editClientModal").show();
+                $("#editClientName").val($("#clientName").text());
+                $("#editClientEmail").val($("#clientEmail").text());
+                $("#editClientPhone").val($("#clientPhone").text());
+                $("#editClientCompany").val($("#clientCompany").text());
+            });
+
+            $("#saveClientChanges").click(function() {
+                let name = $("#editClientName").val();
+                let email = $("#editClientEmail").val();
+                let phone = $("#editClientPhone").val();
+                let company = $("#editClientCompany").val();
+
+                $.ajax({
+                    url: "update_client.php",
+                    type: "POST",
+                    data: { id: clientId, name: name, email: email, phone: phone, company: company },
+                    success: function(response) {
+                        alert(response);
+                        $("#editClientModal").hide();
+                        loadClientDetails();
+                    }
+                });
+            });
+
+            $("#deleteClientBtn").click(function() {
+                if (confirm("Are you sure you want to delete this client?")) {
+                    $.ajax({
+                        url: "delete_client.php",
+                        type: "POST",
+                        data: { id: clientId },
+                        success: function(response) {
+                            alert(response);
+                            window.location.href = "clients.html";
+                        }
+                    });
+                }
+            });
+
+            function closeEditModal() {
+                $("#editClientModal").hide();
+            }
+
+            loadClientDetails();
+        });
+    </script>
+</body>
+</html>

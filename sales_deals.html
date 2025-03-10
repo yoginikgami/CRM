@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Sales & Deals</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="deals-container">
+        <h2>Sales & Deals</h2>
+        <button id="addDealBtn">Add Deal</button>
+        <table id="dealTable">
+            <thead>
+                <tr>
+                    <th>Deal Name</th>
+                    <th>Client</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Deal Form Modal -->
+    <div id="dealFormModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Deal</h3>
+            <input type="text" id="dealName" placeholder="Deal Name" required>
+            <input type="text" id="dealClient" placeholder="Client Name" required>
+            <input type="number" id="dealValue" placeholder="Value" required>
+            <select id="dealStatus">
+                <option value="Negotiation">Negotiation</option>
+                <option value="Won">Won</option>
+                <option value="Lost">Lost</option>
+            </select>
+            <button id="saveDeal">Save</button>
+            <button onclick="closeDealModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function loadDeals() {
+                $.ajax({
+                    url: "fetch_deals.php",
+                    type: "GET",
+                    success: function(data) {
+                        let deals = JSON.parse(data);
+                        let dealTable = "";
+                        deals.forEach(deal => {
+                            dealTable += `<tr>
+                                <td>${deal.name}</td>
+                                <td>${deal.client}</td>
+                                <td>${deal.value}</td>
+                                <td>${deal.status}</td>
+                                <td>
+                                    <button onclick='deleteDeal(${deal.id})'>Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#dealTable tbody").html(dealTable);
+                    }
+                });
+            }
+
+            $("#addDealBtn").click(function() {
+                $("#dealFormModal").show();
+            });
+
+            $("#saveDeal").click(function() {
+                let name = $("#dealName").val();
+                let client = $("#dealClient").val();
+                let value = $("#dealValue").val();
+                let status = $("#dealStatus").val();
+
+                $.ajax({
+                    url: "add_deal.php",
+                    type: "POST",
+                    data: { name: name, client: client, value: value, status: status },
+                    success: function(response) {
+                        alert(response);
+                        $("#dealFormModal").hide();
+                        loadDeals();
+                    }
+                });
+            });
+
+            function deleteDeal(id) {
+                $.ajax({
+                    url: "delete_deal.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadDeals();
+                    }
+                });
+            }
+
+            function closeDealModal() {
+                $("#dealFormModal").hide();
+            }
+
+            loadDeals();
+        });
+    </script>
+</body>
+</html>

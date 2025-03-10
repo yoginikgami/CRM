@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Reports & Analytics</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="reports-container">
+        <h2>Reports & Analytics</h2>
+
+        <div class="chart-container">
+            <h3>Sales Performance</h3>
+            <canvas id="salesChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Client Growth</h3>
+            <canvas id="clientsChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function loadSalesData() {
+                $.ajax({
+                    url: "fetch_sales_data.php",
+                    type: "GET",
+                    success: function(data) {
+                        let salesData = JSON.parse(data);
+                        let labels = salesData.map(item => item.month);
+                        let values = salesData.map(item => item.sales);
+
+                        let ctx = $("#salesChart")[0].getContext("2d");
+                        new Chart(ctx, {
+                            type: "line",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: "Sales Revenue",
+                                    data: values,
+                                    borderColor: "blue",
+                                    backgroundColor: "rgba(0,0,255,0.1)"
+                                }]
+                            }
+                        });
+                    }
+                });
+            }
+
+            function loadClientsData() {
+                $.ajax({
+                    url: "fetch_clients_data.php",
+                    type: "GET",
+                    success: function(data) {
+                        let clientsData = JSON.parse(data);
+                        let labels = clientsData.map(item => item.month);
+                        let values = clientsData.map(item => item.clients);
+
+                        let ctx = $("#clientsChart")[0].getContext("2d");
+                        new Chart(ctx, {
+                            type: "bar",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: "New Clients",
+                                    data: values,
+                                    backgroundColor: "green"
+                                }]
+                            }
+                        });
+                    }
+                });
+            }
+
+            loadSalesData();
+            loadClientsData();
+        });
+    </script>
+</body>
+</html>

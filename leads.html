@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Leads</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="leads-container">
+        <h2>Leads</h2>
+        <button id="addLeadBtn">Add Lead</button>
+        <table id="leadTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Lead Form Modal -->
+    <div id="leadFormModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Lead</h3>
+            <input type="text" id="leadName" placeholder="Name" required>
+            <input type="email" id="leadEmail" placeholder="Email" required>
+            <select id="leadStatus">
+                <option value="New">New</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Converted">Converted</option>
+            </select>
+            <button id="saveLead">Save</button>
+            <button onclick="closeLeadModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function loadLeads() {
+                $.ajax({
+                    url: "fetch_leads.php",
+                    type: "GET",
+                    success: function(data) {
+                        let leads = JSON.parse(data);
+                        let leadTable = "";
+                        leads.forEach(lead => {
+                            leadTable += `<tr>
+                                <td>${lead.name}</td>
+                                <td>${lead.email}</td>
+                                <td>${lead.status}</td>
+                                <td>
+                                    <button onclick='deleteLead(${lead.id})'>Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#leadTable tbody").html(leadTable);
+                    }
+                });
+            }
+
+            $("#addLeadBtn").click(function() {
+                $("#leadFormModal").show();
+            });
+
+            $("#saveLead").click(function() {
+                let name = $("#leadName").val();
+                let email = $("#leadEmail").val();
+                let status = $("#leadStatus").val();
+
+                $.ajax({
+                    url: "add_lead.php",
+                    type: "POST",
+                    data: { name: name, email: email, status: status },
+                    success: function(response) {
+                        alert(response);
+                        $("#leadFormModal").hide();
+                        loadLeads();
+                    }
+                });
+            });
+
+            function deleteLead(id) {
+                $.ajax({
+                    url: "delete_lead.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadLeads();
+                    }
+                });
+            }
+
+            function closeLeadModal() {
+                $("#leadFormModal").hide();
+            }
+
+            loadLeads();
+        });
+    </script>
+</body>
+</html>

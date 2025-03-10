@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Tasks & Appointments</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="tasks-container">
+        <h2>Tasks & Appointments</h2>
+        <button id="addTaskBtn">Add Task</button>
+        <button id="addAppointmentBtn">Add Appointment</button>
+        <h3>Task List</h3>
+        <table id="taskTable">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <h3>Appointments</h3>
+        <table id="appointmentTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date & Time</th>
+                    <th>Client</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Task Form Modal -->
+    <div id="taskFormModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Task</h3>
+            <input type="text" id="taskName" placeholder="Task Name" required>
+            <input type="date" id="taskDueDate" required>
+            <select id="taskStatus">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <button id="saveTask">Save</button>
+            <button onclick="closeTaskModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Appointment Form Modal -->
+    <div id="appointmentFormModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Appointment</h3>
+            <input type="text" id="appointmentTitle" placeholder="Title" required>
+            <input type="datetime-local" id="appointmentDateTime" required>
+            <input type="text" id="appointmentClient" placeholder="Client Name" required>
+            <button id="saveAppointment">Save</button>
+            <button onclick="closeAppointmentModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function loadTasks() {
+                $.ajax({
+                    url: "fetch_tasks.php",
+                    type: "GET",
+                    success: function(data) {
+                        let tasks = JSON.parse(data);
+                        let taskTable = "";
+                        tasks.forEach(task => {
+                            taskTable += `<tr>
+                                <td>${task.name}</td>
+                                <td>${task.due_date}</td>
+                                <td>${task.status}</td>
+                                <td>
+                                    <button onclick='deleteTask(${task.id})'>Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#taskTable tbody").html(taskTable);
+                    }
+                });
+            }
+
+            function loadAppointments() {
+                $.ajax({
+                    url: "fetch_appointments.php",
+                    type: "GET",
+                    success: function(data) {
+                        let appointments = JSON.parse(data);
+                        let appointmentTable = "";
+                        appointments.forEach(appointment => {
+                            appointmentTable += `<tr>
+                                <td>${appointment.title}</td>
+                                <td>${appointment.date_time}</td>
+                                <td>${appointment.client}</td>
+                                <td>
+                                    <button onclick='deleteAppointment(${appointment.id})'>Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#appointmentTable tbody").html(appointmentTable);
+                    }
+                });
+            }
+
+            $("#addTaskBtn").click(function() {
+                $("#taskFormModal").show();
+            });
+
+            $("#saveTask").click(function() {
+                let name = $("#taskName").val();
+                let dueDate = $("#taskDueDate").val();
+                let status = $("#taskStatus").val();
+
+                $.ajax({
+                    url: "add_task.php",
+                    type: "POST",
+                    data: { name: name, due_date: dueDate, status: status },
+                    success: function(response) {
+                        alert(response);
+                        $("#taskFormModal").hide();
+                        loadTasks();
+                    }
+                });
+            });
+
+            function deleteTask(id) {
+                $.ajax({
+                    url: "delete_task.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadTasks();
+                    }
+                });
+            }
+
+            $("#addAppointmentBtn").click(function() {
+                $("#appointmentFormModal").show();
+            });
+
+            $("#saveAppointment").click(function() {
+                let title = $("#appointmentTitle").val();
+                let dateTime = $("#appointmentDateTime").val();
+                let client = $("#appointmentClient").val();
+
+                $.ajax({
+                    url: "add_appointment.php",
+                    type: "POST",
+                    data: { title: title, date_time: dateTime, client: client },
+                    success: function(response) {
+                        alert(response);
+                        $("#appointmentFormModal").hide();
+                        loadAppointments();
+                    }
+                });
+            });
+
+            function deleteAppointment(id) {
+                $.ajax({
+                    url: "delete_appointment.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadAppointments();
+                    }
+                });
+            }
+
+            function closeTaskModal() {
+                $("#taskFormModal").hide();
+            }
+
+            function closeAppointmentModal() {
+                $("#appointmentFormModal").hide();
+            }
+
+            loadTasks();
+            loadAppointments();
+        });
+    </script>
+</body>
+</html>

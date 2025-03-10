@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Communication & Emails</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="communication-container">
+        <h2>Communication & Emails</h2>
+
+        <!-- Tabs for Emails, Chat, and Call Logs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="emailSection">Emails</button>
+            <button class="tab-btn" data-tab="chatSection">Chat</button>
+            <button class="tab-btn" data-tab="callLogsSection">Call Logs</button>
+        </div>
+
+        <!-- Email Inbox -->
+        <div id="emailSection" class="tab-content">
+            <h3>Email Inbox</h3>
+            <button id="composeEmailBtn">Compose Email</button>
+            <table id="emailTable">
+                <thead>
+                    <tr>
+                        <th>Sender</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Chat Section -->
+        <div id="chatSection" class="tab-content" style="display: none;">
+            <h3>Chat & Messaging</h3>
+            <div class="chat-box">
+                <div id="chatMessages"></div>
+                <input type="text" id="chatInput" placeholder="Type a message...">
+                <button id="sendChatBtn">Send</button>
+            </div>
+        </div>
+
+        <!-- Call Logs Section -->
+        <div id="callLogsSection" class="tab-content" style="display: none;">
+            <h3>Call Logs</h3>
+            <table id="callLogsTable">
+                <thead>
+                    <tr>
+                        <th>Caller</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Email Compose Modal -->
+    <div id="emailComposeModal" class="modal">
+        <div class="modal-content">
+            <h3>Compose Email</h3>
+            <input type="text" id="emailTo" placeholder="To" required>
+            <input type="text" id="emailSubject" placeholder="Subject" required>
+            <textarea id="emailBody" placeholder="Write your message..."></textarea>
+            <button id="sendEmail">Send</button>
+            <button onclick="closeEmailModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Tab switching
+            $(".tab-btn").click(function() {
+                $(".tab-btn").removeClass("active");
+                $(this).addClass("active");
+
+                $(".tab-content").hide();
+                $("#" + $(this).data("tab")).show();
+            });
+
+            // Load Emails
+            function loadEmails() {
+                $.ajax({
+                    url: "fetch_emails.php",
+                    type: "GET",
+                    success: function(data) {
+                        let emails = JSON.parse(data);
+                        let emailTable = "";
+                        emails.forEach(email => {
+                            emailTable += `<tr>
+                                <td>${email.sender}</td>
+                                <td>${email.subject}</td>
+                                <td>${email.date}</td>
+                            </tr>`;
+                        });
+                        $("#emailTable tbody").html(emailTable);
+                    }
+                });
+            }
+
+            // Load Call Logs
+            function loadCallLogs() {
+                $.ajax({
+                    url: "fetch_calls.php",
+                    type: "GET",
+                    success: function(data) {
+                        let calls = JSON.parse(data);
+                        let callTable = "";
+                        calls.forEach(call => {
+                            callTable += `<tr>
+                                <td>${call.caller}</td>
+                                <td>${call.time}</td>
+                                <td>${call.duration}</td>
+                            </tr>`;
+                        });
+                        $("#callLogsTable tbody").html(callTable);
+                    }
+                });
+            }
+
+            // Open Email Modal
+            $("#composeEmailBtn").click(function() {
+                $("#emailComposeModal").show();
+            });
+
+            // Send Email
+            $("#sendEmail").click(function() {
+                let to = $("#emailTo").val();
+                let subject = $("#emailSubject").val();
+                let body = $("#emailBody").val();
+
+                $.ajax({
+                    url: "send_email.php",
+                    type: "POST",
+                    data: { to: to, subject: subject, body: body },
+                    success: function(response) {
+                        alert(response);
+                        $("#emailComposeModal").hide();
+                        loadEmails();
+                    }
+                });
+            });
+
+            function closeEmailModal() {
+                $("#emailComposeModal").hide();
+            }
+
+            // Send Chat Message
+            $("#sendChatBtn").click(function() {
+                let message = $("#chatInput").val();
+
+                $.ajax({
+                    url: "send_chat.php",
+                    type: "POST",
+                    data: { message: message },
+                    success: function(response) {
+                        $("#chatMessages").append(`<p>${response}</p>`);
+                        $("#chatInput").val("");
+                    }
+                });
+            });
+
+            loadEmails();
+            loadCallLogs();
+        });
+    </script>
+</body>
+</html>

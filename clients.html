@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Clients</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="clients-container">
+        <h2>Clients</h2>
+        <button id="addClientBtn">Add Client</button>
+        <table id="clientTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Client Form Modal -->
+    <div id="clientFormModal" class="modal">
+        <div class="modal-content">
+            <h3>Add Client</h3>
+            <input type="text" id="clientName" placeholder="Name" required>
+            <input type="email" id="clientEmail" placeholder="Email" required>
+            <input type="text" id="clientPhone" placeholder="Phone" required>
+            <button id="saveClient">Save</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function loadClients() {
+                $.ajax({
+                    url: "fetch_clients.php",
+                    type: "GET",
+                    success: function(data) {
+                        let clients = JSON.parse(data);
+                        let clientTable = "";
+                        clients.forEach(client => {
+                            clientTable += `<tr>
+                                <td>${client.name}</td>
+                                <td>${client.email}</td>
+                                <td>${client.phone}</td>
+                                <td>
+                                    <button onclick='deleteClient(${client.id})'>Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#clientTable tbody").html(clientTable);
+                    }
+                });
+            }
+
+            $("#addClientBtn").click(function() {
+                $("#clientFormModal").show();
+            });
+
+            $("#saveClient").click(function() {
+                let name = $("#clientName").val();
+                let email = $("#clientEmail").val();
+                let phone = $("#clientPhone").val();
+
+                $.ajax({
+                    url: "add_client.php",
+                    type: "POST",
+                    data: { name: name, email: email, phone: phone },
+                    success: function(response) {
+                        alert(response);
+                        $("#clientFormModal").hide();
+                        loadClients();
+                    }
+                });
+            });
+
+            function deleteClient(id) {
+                $.ajax({
+                    url: "delete_client.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadClients();
+                    }
+                });
+            }
+
+            function closeModal() {
+                $("#clientFormModal").hide();
+            }
+
+            loadClients();
+        });
+    </script>
+</body>
+</html>

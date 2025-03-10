@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClientSphere - Settings & Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="settings-container">
+        <h2>Settings & Admin Panel</h2>
+
+        <!-- Tabs for General Settings, Users, and API Integrations -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="generalSettings">General Settings</button>
+            <button class="tab-btn" data-tab="userManagement">User Management</button>
+            <button class="tab-btn" data-tab="apiIntegrations">API Integrations</button>
+        </div>
+
+        <!-- General Settings -->
+        <div id="generalSettings" class="tab-content">
+            <h3>General Settings</h3>
+            <label>System Name:</label>
+            <input type="text" id="systemName" value="ClientSphere">
+            <label>Enable Dark Mode:</label>
+            <select id="darkMode">
+                <option value="enabled">Enabled</option>
+                <option value="disabled">Disabled</option>
+            </select>
+            <button id="saveSettings">Save Settings</button>
+        </div>
+
+        <!-- User Management -->
+        <div id="userManagement" class="tab-content" style="display: none;">
+            <h3>User Management</h3>
+            <button id="addUserBtn">Add User</button>
+            <table id="userTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- API Integrations -->
+        <div id="apiIntegrations" class="tab-content" style="display: none;">
+            <h3>API Integrations</h3>
+            <label>Google API Key:</label>
+            <input type="text" id="googleApiKey">
+            <label>CRM API Token:</label>
+            <input type="text" id="crmApiToken">
+            <button id="saveApiKeys">Save API Keys</button>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <h3>Add User</h3>
+            <input type="text" id="userName" placeholder="Full Name" required>
+            <input type="email" id="userEmail" placeholder="Email" required>
+            <select id="userRole">
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="user">User</option>
+            </select>
+            <button id="saveUser">Save User</button>
+            <button onclick="closeUserModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Tab switching
+            $(".tab-btn").click(function() {
+                $(".tab-btn").removeClass("active");
+                $(this).addClass("active");
+                $(".tab-content").hide();
+                $("#" + $(this).data("tab")).show();
+            });
+
+            // Load Users
+            function loadUsers() {
+                $.ajax({
+                    url: "fetch_users.php",
+                    type: "GET",
+                    success: function(data) {
+                        let users = JSON.parse(data);
+                        let userTable = "";
+                        users.forEach(user => {
+                            userTable += `<tr>
+                                <td>${user.name}</td>
+                                <td>${user.email}</td>
+                                <td>${user.role}</td>
+                                <td>
+                                    <button onclick='deleteUser(${user.id})'>Delete</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#userTable tbody").html(userTable);
+                    }
+                });
+            }
+
+            // Save General Settings
+            $("#saveSettings").click(function() {
+                let systemName = $("#systemName").val();
+                let darkMode = $("#darkMode").val();
+
+                $.ajax({
+                    url: "save_settings.php",
+                    type: "POST",
+                    data: { system_name: systemName, dark_mode: darkMode },
+                    success: function(response) {
+                        alert(response);
+                    }
+                });
+            });
+
+            // Open Add User Modal
+            $("#addUserBtn").click(function() {
+                $("#addUserModal").show();
+            });
+
+            // Save User
+            $("#saveUser").click(function() {
+                let name = $("#userName").val();
+                let email = $("#userEmail").val();
+                let role = $("#userRole").val();
+
+                $.ajax({
+                    url: "add_user.php",
+                    type: "POST",
+                    data: { name: name, email: email, role: role },
+                    success: function(response) {
+                        alert(response);
+                        $("#addUserModal").hide();
+                        loadUsers();
+                    }
+                });
+            });
+
+            function closeUserModal() {
+                $("#addUserModal").hide();
+            }
+
+            function deleteUser(id) {
+                $.ajax({
+                    url: "delete_user.php",
+                    type: "POST",
+                    data: { id: id },
+                    success: function(response) {
+                        alert(response);
+                        loadUsers();
+                    }
+                });
+            }
+
+            // Save API Keys
+            $("#saveApiKeys").click(function() {
+                let googleApiKey = $("#googleApiKey").val();
+                let crmApiToken = $("#crmApiToken").val();
+
+                $.ajax({
+                    url: "save_api_keys.php",
+                    type: "POST",
+                    data: { google_api_key: googleApiKey, crm_api_token: crmApiToken },
+                    success: function(response) {
+                        alert(response);
+                    }
+                });
+            });
+
+            loadUsers();
+        });
+    </script>
+</body>
+</html>
