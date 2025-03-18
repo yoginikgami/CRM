@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add User - Task Management</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.3s ease;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background: #fff;
+            width: 50%;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Modal Header */
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .modal-header .close {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Form Layout */
+        .modal-body {
+            padding-top: 10px;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Form Group */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Full Width Elements */
+        .full-width {
+            grid-column: span 2;
+        }
+
+        textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            grid-column: span 2;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background-color: green;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .cancel-btn {
+            background-color: #ccc;
+            color: black;
+        }
+
+        /* Show modal */
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Open Button */
+        .open-modal-btn {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Button to Open Modal -->
+    <button class="open-modal-btn">Add Task</button>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ADD USER</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" placeholder="Title...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Progress</label>
+                        <select>
+                            <option>Select Progress</option>
+                            <option>Not Started</option>
+                            <option>In Progress</option>
+                            <option>Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date">
+                    </div>
+
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select>
+                            <option>Select Department</option>
+                            <option>HR</option>
+                            <option>Development</option>
+                            <option>Marketing</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Members</label>
+                        <input type="text" placeholder="Enter members">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Attachment</label>
+                        <input type="file">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Task:</label>
+                        <textarea placeholder="Describe the task..."></textarea>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="save-btn">Save</button>
+                        <button type="button" class="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open Modal
+        document.querySelector(".open-modal-btn").addEventListener("click", function () {
+            document.querySelector(".modal-overlay").classList.add("show");
+        });
+
+        // Close Modal
+        document.querySelector(".close").addEventListener("click", function () {
+            document.querySelector(".modal-overlay").classList.remove("show");
+        });
+
+        // Close Modal on Cancel
+        document.querySelector(".cancel-btn").addEventListener("click", function () {
+            document.querySelector(".modal-overlay").classList.remove("show");
+        });
+    </script>
+
+</body>
+</html>
