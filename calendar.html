@@ -1,0 +1,790 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHP Calendar UI</title>
+  
+  <!-- FullCalendar 3.2.0 CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  
+  <style>
+    /* General Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333;
+    }
+
+    /* Calendar Container */
+    .calendar-container {
+        width: 90%;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 12px;
+        background-color: #fff;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+    background-color: #f9f9f9;
+    width: 90%;
+    padding: 12px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Allows scrolling */
+    max-height: 200px; /* Set a maximum height */
+}
+
+/* For smaller screens, reduce the height */
+@media (max-width: 768px) {
+    .sidebar {
+        max-height: 400px; /* Smaller height on medium screens */
+    }
+}
+
+/* For mobile screens, further reduce the height */
+@media (max-width: 480px) {
+    .sidebar {
+        max-height: 350px; /* Further reduced height on small screens */
+    }
+}
+
+    .sidebar h6 {
+        font-size: 18px;
+        margin: 0;
+        color: #444;
+    }
+
+    /* Calendar Header */
+    .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #92a8d1;
+    color: white;
+    padding: 10px;
+}
+
+.month-name {
+    font-size: 18px;
+}
+
+/* Navigation Buttons */
+button {
+    padding: 6px 10px;
+    border: none;
+    cursor: pointer;
+    background: #92a8d1;
+    color: white;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: 0.3s ease-in-out;
+}
+
+    button:hover {
+        background: #6187c6;
+    }
+
+    /* Calendar Grid */
+    #calendar-dates {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+        gap: 8px;
+        padding: 8px;
+        margin-top: 10px;
+    }
+
+    /* Day Buttons */
+    #calendar-dates button {
+        width: 35px;
+        height: 35px;
+        border: none;
+        background: rgb(210, 205, 205);
+        cursor: pointer;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+        transition: 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #calendar-dates button:hover {
+        background: #92a8d1;
+        color: white;
+    }
+
+    /* Highlight Current Date */
+    .current-date {
+        background: rgb(126, 157, 214) !important;
+        color: white !important;
+        font-weight: bold;
+    }
+
+    /* Empty divs for spacing */
+    .empty {
+        visibility: hidden;
+    }
+
+    /* Dropdowns Styling */
+    .dropdown-button {
+        padding: 8px 12px;
+        font-size: 16px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #6187c6;
+        transition: background-color 0.3s ease;
+    }
+
+    .dropdown-button:hover {
+        background-color: #92a8d1;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 50px;
+        left: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 12px;
+        width: 250px;
+        z-index: 1000;
+        display: none;
+    }
+
+    .dropdown-menu.visible {
+        display: block;
+    }
+
+    .dropdown-select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    /* Calendar Button Container */
+    .button-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    /* Responsive UI */
+    @media (max-width: 600px) {
+        .calendar-container {
+            width: 90%;
+        }
+
+        .calendar-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+        }
+
+        .calendar-header button {
+            margin: 5px 0;
+        }
+
+        .dropdown-menu {
+            width: 100%;
+        }
+
+        .button-container {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            padding: 12px 8px;
+        }
+    }
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px; /* Space between icon and text */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+
+    button i {
+      font-size: 18px;
+    }
+
+  /* Style for search input */
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .task-list {
+    margin-top: 12px;
+  }
+
+  .task-list .card {
+    max-width: 100%;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .task-list .card-body {
+    padding: 12px;
+  }
+
+  .task-list .card-title {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .task-list .card-text {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .task-list .card .card-title.text-muted {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  /* For making task list scrollable */
+  @media (max-width: 600px) {
+    .sidebar {
+      max-height: 400px; /* Reduce the max height on smaller screens */
+    }
+  }
+  #dropdown-menu {
+    margin: 0 10px;
+}
+
+#year-select {
+    width: 120px;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.highlight {
+    background-color: rgb(126, 157, 214);
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 5px;
+}
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #8ea6cf; /* Adjust based on your design */
+    padding: 10px;
+    margin-bottom: 20px; /* Adds space below the header */
+}
+
+h1 {
+    margin: 0;
+    color: white;
+    font-size: 24px;
+}
+
+.icon-buttons {
+    display: flex;
+    gap: 10px; /* Adjust spacing between icons */
+}
+.icon-link {
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Keeps the original color */
+}
+
+
+button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+}
+
+/* Space between next div */
+.next-div {
+    margin-top: 20px; /* Adds space above the next div */
+}
+
+</style>
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <!-- Calendar Header -->
+    <div class="calendar-header">
+        <h1>Calendar</h1>
+        <div class="icon-buttons">
+            <button>
+                <a href="notification_setting.php" class="icon-link">
+                <i class="fa-solid fa-gear"></i>
+                </a>
+        </button>
+            <button>
+            <a href="alldata.php" class="icon-link">
+                <i class="fa-solid fa-clipboard"></i>
+            </a>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+    <div class="row">
+      <!-- Left Sidebar (Tasks & Meeting) -->
+      <div class="col-md-4">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button id="prev-month">Prev</button>
+            <div id="month-name" class="month-name">
+                    <span id="current-year" style="cursor: pointer;"></span>
+                    <select id="year-select" class="form-select" style="display: none;">
+                        <!-- Year options will be populated via JavaScript -->
+                    </select>
+            </div>
+            <button id="next-month">Next</button>
+        </div>
+        <div id="calendar-dates" class="calendar-dates">
+            <!-- Dates will be dynamically added here via JavaScript -->
+        </div>
+        
+    </div>
+    
+   <br>
+   <div class="sidebar">
+    <h6>Reminder</h6>
+    
+    <!-- Search Input -->
+    <input
+        type="text"
+        id="taskSearch"
+        class="form-control mb-3"
+        placeholder="Search tasks or meetings..."
+        onkeyup="filterTasks()"
+    />
+    
+    <!-- Task List Display -->
+    <div id="task-list" class="task-list">
+        <p>Loading tasks...</p>
+    </div>
+
+</div>
+
+<!-- Modal Popup for Task Details -->
+<!-- <div class="modal" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="taskModalLabel">Task Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Calendar ID:</strong> <span id="modal-calendar-id"></span></p>
+                <p><strong>User Token:</strong> <span id="modal-user-token"></span></p>
+                <p><strong>Category:</strong> <span id="modal-category"></span></p>
+                <p><strong>Task:</strong> <span id="modal-task"></span></p>
+                <p><strong>Url:</strong> <span id="modal-urll"></span></p>
+                <p><strong>Admin Name:</strong> <span id="modal-admin-name"></span></p>
+                <p><strong>Members:</strong> <span id="modal-members"></span></p>
+                <p><strong>Start Date:</strong> <span id="modal-start-date"></span></p>
+                <p><strong>End Date:</strong> <span id="modal-end-date"></span></p>
+                <p><strong>Created At:</strong> <span id="modal-created-at"></span></p>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+      </div>
+
+      <!-- Right Sidebar (Calendar) -->
+      <div class="col-md-8">
+        <!-- Calendar Section -->
+        <div id="calendar"></div>
+      </div>
+    </div>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+  </div>
+</div>
+
+  <!-- jQuery, Bootstrap, and FullCalendar 3.2.0 Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@4.2.0/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@4.2.0/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@4.2.0/main.min.css" rel="stylesheet"/>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Events Array from Local Storage (example setup)
+    let eventsArray = JSON.parse(localStorage.getItem("")) || [];
+
+    // FullCalendar Initialization
+    const calendarEl = document.getElementById("calendar");
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        height: 500,
+        plugins: ["dayGrid", "interaction"],
+        events: function (info, successCallback) {
+            successCallback(getUniqueTasks(eventsArray));
+        },
+        dateClick: function (info) {
+            $("#createEventModal").modal("show");
+            $("#taskDate").val(info.dateStr);
+            $("#taskForm")[0].reset();
+        },
+    });
+    calendar.render();
+
+    // Deduplicate Tasks
+    function getUniqueTasks(tasks) {
+        const uniqueTasks = new Map();
+        tasks.forEach((task) => uniqueTasks.set(task.start, task));
+        return Array.from(uniqueTasks.values());
+    }
+  
+});
+</script>
+
+<script>
+   $(document).ready(function () {
+    let today = new Date();
+    let currentYear = today.getFullYear();
+    let currentMonth = today.getMonth();
+
+    function getMonthName(monthIndex) {
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+        return monthNames[monthIndex];
+    }
+
+    // Load Calendar function
+   function loadCalendar(year, month) {
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        let firstDay = new Date(year, month, 1).getDay();
+        let calendarHTML = "";
+
+        for (let i = 0; i < firstDay; i++) {
+            calendarHTML += `<div class="date-cell empty"></div>`;
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            let formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            let highlightClass = (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) ? "highlight" : "";
+
+            calendarHTML += `<div class="date-cell ${highlightClass}" data-date="${formattedDate}">${day}</div>`;
+        }
+
+        $("#calendar-dates").html(calendarHTML);
+        $("#current-year").text(`${getMonthName(month)}-${year}`);
+    }
+
+    // Load initial calendar
+    loadCalendar(currentYear, currentMonth);
+
+    // Populate Year Dropdown (2000-2030)
+    for (let y = 2000; y <= 2030; y++) {
+        $("#year-select").append(`<option value="${y}">${y}</option>`);
+    }
+
+    // Click event to show the dropdown
+    $("#current-year").click(function () {
+        $("#year-select").val(currentYear).show().focus();
+        $(this).hide();
+    });
+
+    // Change event for selecting a year
+    $("#year-select").change(function () {
+        currentYear = parseInt($(this).val());
+        loadCalendar(currentYear, currentMonth);
+        $("#year-select").hide();
+        $("#current-year").show().text(`${getMonthName(currentMonth)}-${currentYear}`);
+    }).blur(function () {
+        $(this).hide();
+        $("#current-year").show();
+    }); 
+    
+
+    // Fetch and show all tasks by default
+    function loadAllTasks() {
+    $("#task-list").html("<p>Loading tasks...</p>");
+
+    $.ajax({
+        url: "html/ajax.php",  // Adjust this to your actual PHP file path
+        type: "GET",
+        data: {},  // No date filter; fetch all tasks by default
+        dataType: "json",
+        success: function (response) {
+            console.log(response);  // Log the response to debug
+            $("#task-list").empty();
+            
+            if (response && response.length > 0) {
+                let taskHTML = "";
+                response.forEach(task => {
+                    const taskDate = task.date || "No date available";
+                    taskHTML += `
+    <div class="card mb-3 clickable-card" 
+        data-bs-toggle="modal" 
+        data-bs-target="#taskModal"
+        data-calendar-id="${task.calendar_id}"
+        data-title="${task.title}"
+        data-user-token="${task.user_token}" // Ensure this attribute is set
+        data-category="${task.category}"
+        data-task="${task.task}"
+        data-urll="${task.urll}" 
+        data-start-date="${task.start_date}" // Ensure this attribute is set
+        data-end-date="${task.end_date}"     // Ensure this attribute is set
+        data-created-at="${task.created_at}"
+        data-admin-name="${task.adminName}"
+        data-members="${task.members}">
+        <div class="card-body" style="padding: 10px;">
+            <p class="card-title" style="margin-bottom: 5px; font-weight: bold;">${task.title}</p>
+            <p class="card-text" style="margin-bottom: 3px;"><strong>Date:</strong> ${task.start_date}</p> <!-- Display start date -->
+            <p class="card-text" style="margin-bottom: 3px;"><strong>Category:</strong> ${task.category}</p>
+            <p class="card-text" style="margin-bottom: 0;"><strong>Admin:</strong> ${task.adminName}</p>
+        </div>
+    </div>`;
+
+                });
+                $("#task-list").html(taskHTML);
+            } else {
+                $("#task-list").html("<p>No tasks found.</p>");
+            }
+        },
+        error: function () {
+            $("#task-list").html("<p>Error fetching tasks. Please try again later.</p>");
+        }
+    });
+}
+
+$(document).ready(function() {
+    loadAllTasks(); // Call this function on page load to show all tasks by default
+});
+
+
+// Call the function when the page is ready
+$(document).ready(function() {
+    loadAllTasks();
+});
+
+    // Call the function to load all tasks initially
+    loadAllTasks();
+
+    // Fetch tasks when a date is clicked
+    $(document).on("click", ".date-cell", function () {
+        let selectedDate = $(this).data("date");
+
+        // Show loading message while fetching tasks for selected date
+        $("#task-list").html("<p>Loading tasks...</p>");
+
+        $.ajax({
+            url: "html/ajax.php",
+            type: "GET",
+            data: { action: 'getTasksByDate', date: selectedDate },
+            dataType: "json",
+            success: function (response) {
+                $("#task-list").empty();
+                if (response.length > 0) {
+                    let taskHTML = "";
+                    response.forEach(task => {
+                        const taskDate = task.date || "No date available";
+                        taskHTML += `
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <p class="card-title"><strong>Title: </strong>${task.title}</p>
+                                    <p class="card-text" style="margin-bottom: 3px;"><strong>Date:</strong> ${task.start_date}</p> <!-- Display start date -->
+                                    <p class="card-text"><strong>Category: </strong>${task.category}</p>
+                                    <p class="card-text"><strong>Admin: </strong>${task.adminName}</p>
+                                </div>
+                            </div>`;
+                    });
+                    $("#task-list").html(taskHTML);
+                } else {
+                    $("#task-list").html("<p>No tasks found for this date.</p>");
+                }
+            },
+            error: function () {
+                $("#task-list").html("<p>Error fetching tasks. Please try again later.</p>");
+            }
+        });
+    });
+
+    // Search functionality for filtering tasks
+    function filterTasks() {
+    const query = $("#taskSearch").val().toLowerCase();
+    
+    $("#task-list .card").each(function() {
+        const taskTitle = $(this).find(".card-title").text().toLowerCase();
+        const taskDate = $(this).find(".card-text:contains('Date:')").text().toLowerCase();
+        const taskCategory = $(this).find(".card-text:contains('Category:')").text().toLowerCase();
+        const taskAdmin = $(this).find(".card-text:contains('Admin:')").text().toLowerCase();
+
+        // Check if query matches any field
+        if (taskTitle.includes(query) || taskDate.includes(query) || taskCategory.includes(query) || taskAdmin.includes(query)) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+}
+
+    // Search on input change
+    $("#taskSearch").on("input", filterTasks);
+
+    // Navigate months
+    $("#prev-month").click(() => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        loadCalendar(currentYear, currentMonth);
+        loadAllTasks(); // Reload all tasks when changing month
+    });
+
+    $("#next-month").click(() => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        loadCalendar(currentYear, currentMonth);
+        loadAllTasks(); // Reload all tasks when changing month
+    });
+
+});
+
+</script>
+
+  <script>
+  // Open modal and populate it with task details
+  document.addEventListener('DOMContentLoaded', function () {
+    const taskCards = document.querySelectorAll('.task-card');
+
+    taskCards.forEach(card => {
+      card.addEventListener('click', function () {
+        // Get task data from the clicked card
+        const taskId = card.getAttribute('data-task-id');
+        const taskDate = card.querySelector('.card-title.text-muted').textContent;
+        const taskTitle = card.querySelector('.card-title').textContent;
+        const taskDescription = card.querySelector('.card-text').textContent;
+
+        // Set the data in the modal
+        document.getElementById('modal-date').textContent = taskDate;
+        document.getElementById('modal-title').textContent = taskTitle;
+        document.getElementById('modal-description').textContent = taskDescription;
+
+        // Show the modal
+        $('#taskModal').modal('show');
+      });
+    });
+  });
+
+</script>
+<script>
+   $(document).ready(function() {
+  $('#taskModal').on('show.bs.modal', function (event) {
+    var card = $(event.relatedTarget); // The clicked task card
+
+    // Fetch data attributes from the clicked task card
+    var calendarId = card.data('calendar-id');
+    var title = card.data('title');
+    var userToken = card.data('user-token');
+    var task = card.data('task');
+    var urll = card.data('urll');
+    var startDate = card.data('start-date');
+    var endDate = card.data('end-date');
+    var createdAt = card.data('created-at');
+    var category = card.data('category');
+    var adminName = card.data('admin-name');
+    var members = card.data('members');
+    // Update modal content with data attributes
+    $('#modal-calendar-id').text(calendarId);
+    $('#modal-title').text(title);
+    $('#modal-user-token').text(userToken);
+    $('#modal-category').text(category);
+    $('#modal-task').text(task);
+    $('#modal-urll').text(urll);
+    $('#modal-start-date').text(startDate);
+    $('#modal-end-date').text(endDate);
+    $('#modal-created-at').text(createdAt); 
+    $('#modal-admin-name').text(adminName);
+    $('#modal-members').text(members);
+     // ✅ Properly display the URL as a clickable link
+     if (urll) {
+            $('#modal-urll').html(`<a href="${urll}" target="_blank">${urll}</a>`);
+        } else {
+            $('#modal-urll').text("No URL available");
+        }
+  });
+});
+$(document).ready(function() {
+    // Close modal when the close button is clicked
+    $(document).on("click", ".close-modal", function () {
+        $("#taskModal").modal("hide");
+    });
+
+    // Close modal when clicking outside the modal
+    $("#taskModal").on("click", function (event) {
+        if ($(event.target).hasClass("modal")) {
+            $("#taskModal").modal("hide");
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>
+
+

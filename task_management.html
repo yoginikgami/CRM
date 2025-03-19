@@ -13,6 +13,18 @@
             padding: 0;
         }
 
+        /* Open Button */
+        .open-modal-btn {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
         /* Modal Overlay */
         .modal-overlay {
             position: fixed;
@@ -29,6 +41,12 @@
             transition: visibility 0s, opacity 0.3s ease;
         }
 
+        /* Show modal */
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
         /* Modal Content */
         .modal-content {
             background: #fff;
@@ -36,6 +54,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
 
         /* Modal Header */
@@ -122,26 +141,22 @@
             color: black;
         }
 
-        /* Show modal */
-        .modal-overlay.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Open Button */
-        .open-modal-btn {
-            margin: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
+        .dashboard-btn {
             background-color: #007bff;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            display: none; /* Initially hidden */
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
+
+    <div data-include="header1.html"></div>
+
+    <!-- Include Sidebar -->
+    <div data-include="dashboard1.html"></div>
+
+    <div>
 
     <!-- Button to Open Modal -->
     <button class="open-modal-btn">Add Task</button>
@@ -154,55 +169,55 @@
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="task-form">
                     <div class="form-group">
                         <label>Title</label>
-                        <input type="text" placeholder="Title...">
+                        <input type="text" id="title" placeholder="Title..." required>
                     </div>
 
                     <div class="form-group">
                         <label>Progress</label>
-                        <select>
-                            <option>Select Progress</option>
-                            <option>Not Started</option>
-                            <option>In Progress</option>
-                            <option>Completed</option>
+                        <select id="progress" required>
+                            <option value="">Select Progress</option>
+                            <option value="Not Started">Not Started</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Start Date</label>
-                        <input type="date">
+                        <input type="date" id="start-date" required>
                     </div>
 
                     <div class="form-group">
                         <label>End Date</label>
-                        <input type="date">
+                        <input type="date" id="end-date" required>
                     </div>
 
                     <div class="form-group">
                         <label>Department</label>
-                        <select>
-                            <option>Select Department</option>
-                            <option>HR</option>
-                            <option>Development</option>
-                            <option>Marketing</option>
+                        <select id="department" required>
+                            <option value="">Select Department</option>
+                            <option value="HR">HR</option>
+                            <option value="Development">Development</option>
+                            <option value="Marketing">Marketing</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Members</label>
-                        <input type="text" placeholder="Enter members">
+                        <input type="text" id="members" placeholder="Enter members" required>
                     </div>
 
                     <div class="form-group">
                         <label>Attachment</label>
-                        <input type="file">
+                        <input type="file" id="attachment">
                     </div>
 
                     <div class="form-group full-width">
                         <label>Task:</label>
-                        <textarea placeholder="Describe the task..."></textarea>
+                        <textarea id="task-desc" placeholder="Describe the task..." required></textarea>
                     </div>
 
                     <div class="button-group">
@@ -210,8 +225,12 @@
                         <button type="button" class="cancel-btn">Cancel</button>
                     </div>
                 </form>
+
+                <!-- Button to go to Dashboard -->
+                <button class="dashboard-btn" onclick="goToDashboard()">Go to Dashboard</button>
             </div>
         </div>
+    </div>
     </div>
 
     <script>
@@ -229,7 +248,24 @@
         document.querySelector(".cancel-btn").addEventListener("click", function () {
             document.querySelector(".modal-overlay").classList.remove("show");
         });
+
+        // Form Submission
+        document.getElementById("task-form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent page reload
+
+            // Hide form and show dashboard button
+            document.getElementById("task-form").style.display = "none";
+            document.querySelector(".dashboard-btn").style.display = "block";
+        });
+
+        // Redirect to Dashboard
+        function goToDashboard() {
+            window.location.href = "dashboard.html"; // Replace with your actual dashboard file path
+        }
     </script>
+
+<div id="footer"></div>
+
 
 </body>
 </html>
