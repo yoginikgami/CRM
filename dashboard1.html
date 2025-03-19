@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             display: flex;
@@ -14,122 +14,199 @@
         }
         .sidebar {
             width: 250px;
-            background: #0d6efd;
+            background: #7893bc;
             color: white;
-            padding: 20px;
+            padding: 15px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
+        .sidebar h2 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .sidebar ul li {
+        .sidebar .nav-link {
+            color: white;
             padding: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .sidebar ul li:hover {
-            background: #0056b3;
+        .sidebar .nav-link:hover {
+            background: #788ba0;
+            border-radius: 5px;
+        }
+        .sidebar .dropdown-menu {
+            background: #728190;
+            border: none;
+            padding-left: 20px;
+        }
+        .sidebar .dropdown-item {
+            color: white;
+            padding: 8px 15px;
+        }
+        .sidebar .dropdown-item:hover {
+            background: #748597;
         }
         .main-content {
+            margin-left: 260px;
+            padding: 20px;
             flex: 1;
-            padding: 20px;
-        }
-        .card p {
-            font-size: 1.2rem;
-        }
-        .chart-container {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
+
+    <!-- Sidebar -->
     <div class="sidebar">
         <h2>Dashboard</h2>
-        <ul>
-            <li>Operations</li>
-            <li>Accounts/Documents</li>
-            <li>Finance/Bank</li>
-            <li>Report</li>
-            <li>HR/Payroll</li>
-            <li>Task Management</li>
-            <li>Booster Apps</li>
-            <li>CRM</li>
-            <li>Social Platforms</li>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#">ESP Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#operationsMenu">Operations</a>
+                <ul class="collapse list-unstyled" id="operationsMenu">
+                    <li><a class="dropdown-item" href="#">Sub-item 1</a></li>
+                    <li><a class="dropdown-item" href="#">Sub-item 2</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#accountsMenu">Accounts/Documents</a>
+                <ul class="collapse list-unstyled" id="accountsMenu">
+                    <li><a class="dropdown-item" href="#">Tax Invoice</a></li>
+                    <li><a class="dropdown-item" href="#">Retail Invoice</a></li>
+                    <li><a class="dropdown-item" href="#">Purchase Order</a></li>
+                    <li><a class="dropdown-item" href="#">Quotation</a></li>
+                    <li><a class="dropdown-item" href="#">Credit Note</a></li>
+                    <li><a class="dropdown-item" href="#">Debit Note</a></li>
+                    <li><a class="dropdown-item" href="#">Drawee</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#financeMenu">Finance/Bank</a>
+                <ul class="collapse list-unstyled" id="financeMenu">
+                    <li><a class="dropdown-item" href="#">Transactions</a></li>
+                    <li><a class="dropdown-item" href="#">Statements</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="collapse" data-bs-target="#reportMenu">Report</a>
+                <ul class="collapse list-unstyled" id="reportMenu">
+                    <li><a class="dropdown-item" href="#">Monthly Report</a></li>
+                    <li><a class="dropdown-item" href="#">Yearly Report</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
+
+    <!-- Main Content -->
     <div class="main-content">
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-md-12 d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm">
-                    <h2>Dashboard</h2>
-                    <button class="btn btn-primary">Select Bank</button>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card text-center p-3 shadow">
-                        <h4>Total Income</h4>
-                        <p class="text-success">3,109,124.00</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-center p-3 shadow">
-                        <h4>Total Expense</h4>
-                        <p class="text-danger">280,000.00</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-center p-3 shadow">
-                        <h4>Profit</h4>
-                        <p class="text-primary">2,829,124.00</p>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="chart-container">
-                        <h5>Sales Report</h5>
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="chart-container">
-                        <h5>Income & Expense Distribution</h5>
-                        <canvas id="expenseChart"></canvas>
-                    </div>
-                </div>
+                <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <!-- Card 1: Total Tasks -->
+            <div class="card">
+                <h3>📋 Tasks Overview</h3>
+                <ul class="task-list" id="taskList">
+                    <li class="completed">✔ Task 1 - Completed</li>
+                    <li class="pending">❌ Task 2 - Pending</li>
+                    <li class="completed">✔ Task 3 - Completed</li>
+                </ul>
+            </div><br>
+
+            <!-- Card 2: Upcoming Meetings -->
+            <div class="card">
+                <h3>📅 Meetings (Today & Tomorrow)</h3>
+                <ul class="meeting-list" id="meetingList">
+                    <!-- Meetings will be added dynamically -->
+                </ul>
+            </div><br>
+
+            <!-- Card 3: Pending Approvals -->
+            <div class="card">
+                <h3>✅ Pending Approvals</h3>
+                <p>🛠️ 5 Approval Requests</p>
+            </div><br>
+
+            <!-- Card 4: Notifications -->
+            <div class="card">
+                <h3>🔔 Notifications</h3>
+                <p>🔹 You have 3 unread messages</p>
+                <p>🔹 New invoice generated</p>
             </div>
         </div>
     </div>
+
     <script>
-        const salesChart = new Chart(document.getElementById('salesChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Sales',
-                    data: [5000, 10000, 7000, 15000, 20000, 25000],
-                    borderColor: 'blue',
-                    fill: false
-                }]
-            }
-        });
-        
-        const expenseChart = new Chart(document.getElementById('expenseChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Expense', 'Profit'],
-                datasets: [{
-                    label: 'Amount',
-                    data: [280000, 2829124],
-                    backgroundColor: ['red', 'green']
-                }]
-            }
+        document.addEventListener("DOMContentLoaded", function() {
+            const meetings = [
+                { date: "2025-03-18", title: "Team Standup" },
+                { date: "2025-03-19", title: "Client Presentation" },
+                { date: "2025-03-18", title: "Budget Review" }
+            ];
+
+            const today = new Date().toISOString().split('T')[0]; 
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+            const meetingList = document.getElementById("meetingList");
+            meetings.forEach(meeting => {
+                if (meeting.date === today || meeting.date === tomorrowStr) {
+                    let li = document.createElement("li");
+                    li.textContent = `📌 ${meeting.title} (${meeting.date})`;
+                    meetingList.appendChild(li);
+                }
+            });
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Request Notification Permission
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // Meeting Data
+        const meetings = [
+            { date: "2025-03-18", title: "Team Standup" },
+            { date: "2025-03-19", title: "Client Presentation" },
+            { date: "2025-03-18", title: "Budget Review" }
+        ];
+
+        const today = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        const meetingList = document.getElementById("meetingList");
+
+        // Function to Show Chrome Notifications
+        function showNotification(title, message) {
+            if (Notification.permission === "granted") {
+                new Notification(title, {
+                    body: message,
+                    icon: "https://cdn-icons-png.flaticon.com/512/1828/1828884.png"
+                });
+            }
+        }
+
+        // Display Meetings & Trigger Notifications
+        meetings.forEach(meeting => {
+            if (meeting.date === today || meeting.date === tomorrowStr) {
+                let li = document.createElement("li");
+                li.textContent = `📌 ${meeting.title} (${meeting.date})`;
+                meetingList.appendChild(li);
+
+                // Show Notification for Meetings
+                showNotification("Upcoming Meeting", `${meeting.title} scheduled for ${meeting.date}`);
+            }
+        });
+    });
+</script>
+
+
 </body>
 </html>
